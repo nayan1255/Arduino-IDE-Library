@@ -1,16 +1,16 @@
-// ArduinoJson - arduinojson.org
-// Copyright Benoit Blanchon 2014-2019
+// ArduinoJson - https://arduinojson.org
+// Copyright © 2014-2023, Benoit BLANCHON
 // MIT License
 
 #pragma once
 
 #include <stdint.h>
 #include <stdlib.h>  // for size_t
-#include "../Configuration.hpp"
-#include "../Polyfills/math.hpp"
 
-namespace ArduinoJson {
-namespace Internals {
+#include <ArduinoJson/Configuration.hpp>
+#include "math.hpp"
+
+ARDUINOJSON_BEGIN_PRIVATE_NAMESPACE
 
 template <typename T, typename F>
 struct alias_cast_t {
@@ -27,5 +27,4 @@ T alias_cast(F raw_data) {
   return ac.data;
 }
 
-}  // namespace Internals
-}  // namespace ArduinoJson
+ARDUINOJSON_END_PRIVATE_NAMESPACE

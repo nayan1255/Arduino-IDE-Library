@@ -1,55 +1,48 @@
-// ArduinoJson - arduinojson.org
-// Copyright Benoit Blanchon 2014-2019
+// ArduinoJson - https://arduinojson.org
+// Copyright © 2014-2023, Benoit BLANCHON
 // MIT License
 //
 // This example shows the different ways you can use Flash strings with
 // ArduinoJson.
 //
 // Use Flash strings sparingly, because ArduinoJson duplicates them in the
-// JsonBuffer. Prefer plain old char*, as they are more efficient in term of
+// JsonDocument. Prefer plain old char*, as they are more efficient in term of
 // code size, speed, and memory usage.
+//
+// https://arduinojson.org/v6/example/progmem/
 
 #include <ArduinoJson.h>
 
 void setup() {
-#ifdef PROGMEM  // <- check that Flash strings are supported
-
-  DynamicJsonBuffer jsonBuffer;
+  DynamicJsonDocument doc(1024);
 
   // You can use a Flash String as your JSON input.
-  // WARNING: the content of the Flash String will be duplicated in the
-  // JsonBuffer.
-  JsonObject& root =
-      jsonBuffer.parseObject(F("{\"sensor\":\"gps\",\"time\":1351824120,"
-                               "\"data\":[48.756080,2.302038]}"));
+  // WARNING: the strings in the input will be duplicated in the JsonDocument.
+  deserializeJson(doc, F("{\"sensor\":\"gps\",\"time\":1351824120,"
+                         "\"data\":[48.756080,2.302038]}"));
 
-  // You can use a Flash String to get an element of a JsonObject
+  // You can use a Flash String as a key to get a member from JsonDocument
   // No duplication is done.
-  long time = root[F("time")];
+  long time = doc[F("time")];
 
-  // You can use a Flash String to set an element of a JsonObject
+  // You can use a Flash String as a key to set a member of a JsonDocument
   // WARNING: the content of the Flash String will be duplicated in the
-  // JsonBuffer.
-  root[F("time")] = time;
+  // JsonDocument.
+  doc[F("time")] = time;
 
-  // You can set a Flash String to a JsonObject or JsonArray:
+  // You can set a Flash String as the content of a JsonVariant
   // WARNING: the content of the Flash String will be duplicated in the
-  // JsonBuffer.
-  root["sensor"] = F("gps");
+  // JsonDocument.
+  doc["sensor"] = F("gps");
 
-  // It works with RawJson too:
-  root["sensor"] = RawJson(F("\"gps\""));
+  // It works with serialized() too:
+  doc["sensor"] = serialized(F("\"gps\""));
+  doc["sensor"] = serialized(F("\xA3gps"), 3);
 
   // You can compare the content of a JsonVariant to a Flash String
-  if (root["sensor"] == F("gps")) {
+  if (doc["sensor"] == F("gps")) {
     // ...
   }
-
-#else
-
-#warning PROGMEM is not supported on this platform
-
-#endif
 }
 
 void loop() {
